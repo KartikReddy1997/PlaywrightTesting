@@ -2,7 +2,14 @@
   "name": "playwrighttesting",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:chromium": "playwright test --project=chromium",
+    "test:report": "playwright show-report",
+    "testcase" : "playwright test --project chromium --headed --grep=\"has title\""
+  },
+
   "keywords": [],
   "author": "",
   "license": "ISC",
