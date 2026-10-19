@@ -1,32 +1,54 @@
 import { test, expect } from '@playwright/test';
+import { captureScreenshot } from '../Utils/screenShotHealper';
+import { elementsPage } from '../Pages/elementsPage'
 
 test('navigate to DemoQA website', async ({ page }) => {
 await page.goto('https://demoqa.com/');
 expect(page.url()).toBe('https://demoqa.com/');
 });
 
-test('validate Elements link', async ({ page }) => {
-  await page.goto('https://demoqa.com/');
+test('validate Elements link', async ({ page }, testInfo) => {
+  const elements = new elementsPage(page);
+  await page.goto('/');
   await expect(page).toHaveURL('https://demoqa.com/');
 
   await page.getByRole('link', { name: 'Elements' }).click();
   await expect(page).toHaveURL('https://demoqa.com/elements');
 
-  await page.getByRole('link', { name: 'Text Box' }).click();
-  await expect(page.getByRole('heading', { name: 'Text Box' })).toBeVisible();
+  await elements.textBox.click();
+  await expect(elements.textBox).toBeVisible();
 
-  await page.getByRole('textbox', { name: 'Full Name' }).fill('Full name');
-  await page.getByRole('textbox', { name: 'name@example.com' }).fill('mail@gmai.com');
-  await page.getByRole('textbox', { name: 'Current Address' }).fill('Street number,locality,city');
-  await page.locator('#permanentAddress').fill('ahosfhawy');
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await elements.fullNameTextBox.fill('Full name');
+  await elements.emailTextBox.fill('mail@gmai.com');
+  await elements.addressTextBox.fill('Street number,locality,city');
+  await elements.permAddressTextBox.fill('ahosfhawy');
+  await elements.submitBtn.click();
 
-  await expect(page.locator('#name')).toContainText('Name:Full name');
-  await expect(page.locator('#email')).toContainText('Email:mail@gmai.com');
-  await expect(page.locator('#output')).toContainText('Current Address :Street number,locality,city');
-  await expect(page.locator('#output')).toContainText('Permananet Address :ahosfhawy');
+  await expect(elements.resultName).toContainText('Name:Full name');
+  await expect(elements.resultEmail).toContainText('Email:mail@gmai.com');
+  await expect(elements.resultAddress).toContainText('Current Address :Street number,locality,city');
+  await expect(elements.resultPermAddress).toContainText('Permananet Address :ahosfhawy');
 
-  await page.getByRole('link', { name: 'Check Box' }).click();
-  await page.getByRole('checkbox', { name: 'Home' }).click();
+ 
+  await elements.chechBox.click();
+  if(!await elements.homeCheckbox.isChecked())
+  {
+    await elements.homeCheckbox.click();
+    await captureScreenshot(page,testInfo,'checkBox selected');
+    }
   await expect(page.locator('#result')).toBeVisible();
+
+  await elements.radioButton.click();
+  const radioButton = elements.yesRadioButton;
+  
+    
+
+  if(!await radioButton.isChecked()){
+    await radioButton.check();
+    await captureScreenshot(page,testInfo,'radio button selected');
+  }
+
+
+
+
 });
